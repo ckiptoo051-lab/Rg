@@ -1,0 +1,6 @@
+{
+  "name": "WhatsApp Chat Mock",
+  "description": "Interactive WhatsApp mock chat editor with high-resolution image exporting, saved chats, custom emoji reactions, failed status emulation, and highly polished replica UI.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
