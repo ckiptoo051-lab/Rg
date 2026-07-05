@@ -242,67 +242,19 @@ fun WhatsAppMockScreen(
 
     var showAttachOptionsDialog by remember { mutableStateOf(false) }
 
-    Scaffold(
-        bottomBar = {
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .background(Color(0xFFF0F2F5))
-            ) {
-                // Sender Switch Panel (Visible in-app for editing context)
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 14.dp, vertical = 6.dp),
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Text(
-                        text = "Sender mode for next message:",
-                        fontSize = 12.sp,
-                        fontWeight = FontWeight.Medium,
-                        color = WaTextGrey
-                    )
-                    Row {
-                        FilterChip(
-                            selected = !isNextMessageOutgoing,
-                            onClick = { isNextMessageOutgoing = false },
-                            label = { Text("Incoming", fontSize = 11.sp) },
-                            colors = FilterChipDefaults.filterChipColors(
-                                selectedContainerColor = Color.White,
-                                selectedLabelColor = WaTeal
-                            )
-                        )
-                        Spacer(modifier = Modifier.width(6.dp))
-                        FilterChip(
-                            selected = isNextMessageOutgoing,
-                            onClick = { isNextMessageOutgoing = true },
-                            label = { Text("Outgoing", fontSize = 11.sp) },
-                            colors = FilterChipDefaults.filterChipColors(
-                                selectedContainerColor = WaTeal,
-                                selectedLabelColor = Color.White
-                            )
-                        )
-                    }
-                }
-            }
-        }
-    ) { innerPadding ->
-        // Capture Container
-        Box(
-            modifier = modifier
-                .fillMaxSize()
-                .padding(innerPadding)
-                .background(WaBackgroundBeige)
-        ) {
-            // AndroidView renders exact high res frame for screen captures
-            AndroidView(
-                factory = { ctx ->
-                    androidx.compose.ui.platform.ComposeView(ctx).apply {
-                        setContent {
-                            Box(
-                                modifier = Modifier
-                                    .fillMaxSize()
+    Box(
+        modifier = modifier
+            .fillMaxSize()
+            .background(WaBackgroundBeige)
+    ) {
+        // AndroidView renders exact high res frame for screen captures
+        AndroidView(
+            factory = { ctx ->
+                androidx.compose.ui.platform.ComposeView(ctx).apply {
+                    setContent {
+                        Box(
+                            modifier = Modifier
+                                .fillMaxSize()
                                     .background(WaBackgroundBeige)
                             ) {
                                 // Full page doodle wallpaper
@@ -885,8 +837,72 @@ fun WhatsAppMockScreen(
                 },
                 modifier = Modifier.fillMaxSize()
             )
+
+            // Floating controls overlay (visible in-app for editing, but NOT captured in screenshot!)
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(bottom = 80.dp)
+                    .navigationBarsPadding(), // Account for bottom gesture bar insets
+                contentAlignment = Alignment.BottomCenter
+            ) {
+                Surface(
+                    shape = RoundedCornerShape(24.dp),
+                    color = Color.Black.copy(alpha = 0.82f),
+                    contentColor = Color.White,
+                    tonalElevation = 6.dp,
+                    shadowElevation = 6.dp,
+                    modifier = Modifier.padding(16.dp)
+                ) {
+                    Row(
+                        modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(12.dp)
+                    ) {
+                        Text(
+                            text = "Next Message Sender:",
+                            fontSize = 12.sp,
+                            fontWeight = FontWeight.Bold,
+                            color = Color.White.copy(alpha = 0.9f)
+                        )
+                        Row(
+                            modifier = Modifier
+                                .background(Color.White.copy(alpha = 0.15f), RoundedCornerShape(16.dp))
+                                .padding(2.dp)
+                        ) {
+                            Box(
+                                modifier = Modifier
+                                    .clip(RoundedCornerShape(14.dp))
+                                    .background(if (!isNextMessageOutgoing) Color(0xFF00A884) else Color.Transparent)
+                                    .clickable { isNextMessageOutgoing = false }
+                                    .padding(horizontal = 12.dp, vertical = 6.dp)
+                            ) {
+                                Text(
+                                    text = "Incoming",
+                                    fontSize = 11.sp,
+                                    fontWeight = FontWeight.Bold,
+                                    color = Color.White
+                                )
+                            }
+                            Box(
+                                modifier = Modifier
+                                    .clip(RoundedCornerShape(14.dp))
+                                    .background(if (isNextMessageOutgoing) Color(0xFF00A884) else Color.Transparent)
+                                    .clickable { isNextMessageOutgoing = true }
+                                    .padding(horizontal = 12.dp, vertical = 6.dp)
+                            ) {
+                                Text(
+                                    text = "Outgoing",
+                                    fontSize = 11.sp,
+                                    fontWeight = FontWeight.Bold,
+                                    color = Color.White
+                                )
+                            }
+                        }
+                    }
+                }
+            }
         }
-    }
 
     // --- Saved Chats list manager ---
     if (showChatSelector) {
