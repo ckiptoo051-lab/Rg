@@ -526,6 +526,21 @@ fun WhatsAppMockScreen(
                                                     }
                                                 )
                                                 DropdownMenuItem(
+                                                    text = { 
+                                                        Text(
+                                                            text = "Next Sender: " + if (isNextMessageOutgoing) "Outgoing (Me)" else "Incoming (Them)",
+                                                            fontWeight = FontWeight.Bold,
+                                                            color = WaTeal
+                                                        )
+                                                    },
+                                                    onClick = {
+                                                        showMenu = false
+                                                        isNextMessageOutgoing = !isNextMessageOutgoing
+                                                        val senderType = if (isNextMessageOutgoing) "Outgoing (Me)" else "Incoming (Them)"
+                                                        Toast.makeText(context, "Next message sender set to: $senderType", Toast.LENGTH_SHORT).show()
+                                                    }
+                                                )
+                                                DropdownMenuItem(
                                                     text = { Text("Edit Chat Profile") },
                                                     onClick = {
                                                         showMenu = false
@@ -706,6 +721,7 @@ fun WhatsAppMockScreen(
                                     Row(
                                         modifier = Modifier
                                             .fillMaxWidth()
+                                            .navigationBarsPadding() // Ensures the bottom row floats perfectly above system nav keys/handle
                                             .padding(start = 8.dp, end = 8.dp, top = 4.dp, bottom = 12.dp),
                                         verticalAlignment = Alignment.CenterVertically
                                     ) {
@@ -815,7 +831,8 @@ fun WhatsAppMockScreen(
                                                         }
                                                     } else {
                                                         isNextMessageOutgoing = !isNextMessageOutgoing
-                                                        Toast.makeText(context, "Switched message sender!", Toast.LENGTH_SHORT).show()
+                                                        val senderType = if (isNextMessageOutgoing) "Outgoing (Me)" else "Incoming (Them)"
+                                                        Toast.makeText(context, "Next message sender: $senderType", Toast.LENGTH_SHORT).show()
                                                     }
                                                 }
                                                 .testTag("send_message_button"),
@@ -838,70 +855,7 @@ fun WhatsAppMockScreen(
                 modifier = Modifier.fillMaxSize()
             )
 
-            // Floating controls overlay (visible in-app for editing, but NOT captured in screenshot!)
-            Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(bottom = 80.dp)
-                    .navigationBarsPadding(), // Account for bottom gesture bar insets
-                contentAlignment = Alignment.BottomCenter
-            ) {
-                Surface(
-                    shape = RoundedCornerShape(24.dp),
-                    color = Color.Black.copy(alpha = 0.82f),
-                    contentColor = Color.White,
-                    tonalElevation = 6.dp,
-                    shadowElevation = 6.dp,
-                    modifier = Modifier.padding(16.dp)
-                ) {
-                    Row(
-                        modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.spacedBy(12.dp)
-                    ) {
-                        Text(
-                            text = "Next Message Sender:",
-                            fontSize = 12.sp,
-                            fontWeight = FontWeight.Bold,
-                            color = Color.White.copy(alpha = 0.9f)
-                        )
-                        Row(
-                            modifier = Modifier
-                                .background(Color.White.copy(alpha = 0.15f), RoundedCornerShape(16.dp))
-                                .padding(2.dp)
-                        ) {
-                            Box(
-                                modifier = Modifier
-                                    .clip(RoundedCornerShape(14.dp))
-                                    .background(if (!isNextMessageOutgoing) Color(0xFF00A884) else Color.Transparent)
-                                    .clickable { isNextMessageOutgoing = false }
-                                    .padding(horizontal = 12.dp, vertical = 6.dp)
-                            ) {
-                                Text(
-                                    text = "Incoming",
-                                    fontSize = 11.sp,
-                                    fontWeight = FontWeight.Bold,
-                                    color = Color.White
-                                )
-                            }
-                            Box(
-                                modifier = Modifier
-                                    .clip(RoundedCornerShape(14.dp))
-                                    .background(if (isNextMessageOutgoing) Color(0xFF00A884) else Color.Transparent)
-                                    .clickable { isNextMessageOutgoing = true }
-                                    .padding(horizontal = 12.dp, vertical = 6.dp)
-                            ) {
-                                Text(
-                                    text = "Outgoing",
-                                    fontSize = 11.sp,
-                                    fontWeight = FontWeight.Bold,
-                                    color = Color.White
-                                )
-                            }
-                        }
-                    }
-                }
-            }
+
         }
 
     // --- Saved Chats list manager ---
